@@ -1,3 +1,4 @@
+#%%
 import numpy as np
 import pyBASS as pb
 import mvBayes as mb
@@ -50,6 +51,7 @@ psi_obs = fs.geometry.gam_to_psi(gam_obs)
 #     residSDExtract=lambda bass_out: np.sqrt(bass_out.samples.s2),
 # )
 
+#%%
 emu_vv = mb.mvBayes(
     pb.bass,
     x_train,
@@ -59,3 +61,5 @@ emu_vv = mb.mvBayes(
     # optionally extract posterior samples of residual standard deviation
     residSDExtract=lambda bass_out: np.sqrt(bass_out.samples.s2),
 )
+
+# %%
