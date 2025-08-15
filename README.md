@@ -1,21 +1,26 @@
 # mvBayes
 
-A python implementation of the multivariate Bayesian regression (mvBayes) framework. Decomposes a multivariate/functional response using a user-specified orthogonal basis decomposition, and then models each basis component independently using an arbitrary user-specified (univariate) Bayesian regression model. Includes prediction and plotting methods.
+A Python implementation of the multivariate Bayesian regression (mvBayes) framework. Decomposes a multivariate/functional response using a user-specified orthogonal basis decomposition, and then models each basis component independently using an arbitrary user-specified (univariate) Bayesian regression model. Includes prediction and plotting methods.
 
-## Installation
-Use
-```bash
-pip install "git+https://cee-gitlab.sandia.gov/statistics/mvBayes/#egg=mvBayes&subdirectory=mvBayesPy"
-```
 
 ## Examples
-* [Friedman Example](examples/friedman_example.py) - An extension of the "Friedman function" to functional response. The Bayesian regression model here is BASS (Bayesian Adaptive Smoothing Splines, see https://github.com/lanl/pyBASS)
+* [Friedman Example](examples/friedman_demo.py) - An extension of the "Friedman function" to functional response. The Bayesian regression model here is BASS (Bayesian Adaptive Smoothing Splines, see https://github.com/lanl/BASS)
 
+
+### Installation
+------------------------------------------------------------------------------
+1. Download zip or tar.gz of package or clone repository
+2. Install into R (> 4.1.0)
+
+> `install.packages("mvBayes.tar.gz", repos = NULL)`
+
+------------------------------------------------------------------------------
 
 ## References
 
 
 ************
 
-Author: Gavin Q. Collins
+Author: Gavin Q. Collins and J. Derek Tucker
+Sandia National Laboratories
 
