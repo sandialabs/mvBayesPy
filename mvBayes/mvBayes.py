@@ -38,6 +38,8 @@ from .cov import (
     covDiag
 )
 
+from .cv import mvBayesCV
+
 
 # %% Set up PCA basis functions
 class basisSetup:
