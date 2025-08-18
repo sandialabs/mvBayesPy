@@ -3,7 +3,7 @@ import time
 import mvBayes as mb
 from scipy.stats import multivariate_normal
 
-def mvBayesCV(bayesModel, X, Y, nTrain=None, nTest=None, nRep=1, seed=None, coverageTarget=0.95, idxSamples="default", uqTruncMethod="gaussian", **kwargs):
+def mvCV(bayesModel, X, Y, nTrain=None, nTest=None, nRep=1, seed=None, coverageTarget=0.95, idxSamples="default", uqTruncMethod="gaussian", **kwargs):
     """
     Cross-Validation (CV) of a Multivariate Bayesian Regression Model
     

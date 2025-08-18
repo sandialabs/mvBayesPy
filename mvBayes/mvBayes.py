@@ -38,7 +38,7 @@ from .cov import (
     covDiag
 )
 
-from .cv import mvBayesCV
+from .cv import cv
 
 
 # %% Set up PCA basis functions
@@ -1237,7 +1237,7 @@ class mvBayes:
 
         return
 
-    def sobol(
+    def mvSobol(
         self, totalSobol=True, idxSamples="final", nMC=None, showPlot=False, **kwargs
     ):
         """
