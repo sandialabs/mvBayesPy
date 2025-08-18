@@ -38,7 +38,7 @@ from .cov import (
     covDiag
 )
 
-from .cv import cv
+from .cv import mvCV
 
 
 # %% Set up PCA basis functions
