@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=61.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mvBayes"
+version = "1.0.3"
+authors = [{name = "Gavin Collins", email = "gqcolli@sandia.gov"},
+           {name = "J. Derek Tucker", email = "jdtuck@sandia.gov"}]
+license = {text = "BSD-3"}
+description = "Multivariate Bayesian Modeling"
+requires-python = ">=3.9"
+dependencies = ["numpy", "scipy", "matplotlib", "scikit-learn", "patsy"]
+
+[project.urls]
+Homepage = "https://cee-gitlab.sandia.gov/gqcolli/mvBayes"
+
+[project.optional-dependencies]
+optional = ["pathos", "fdasrsf", "pyBASS", "pyBayesPPR"]
+
+[tool.setuptools]
+zip-safe = false
+include-package-data = false
+
+[tool.setuptools.packages]
+find = {namespaces = false}
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q"
+testpaths = [
+    "tests",
+    "integration",
+]
