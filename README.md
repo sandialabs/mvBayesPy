@@ -4,17 +4,8 @@ A Python implementation of the multivariate Bayesian regression (mvBayes) framew
 
 
 ## Examples
-* [Friedman Example](examples/friedman_demo.py) - An extension of the "Friedman function" to functional response. The Bayesian regression model here is BASS (Bayesian Adaptive Smoothing Splines, see https://github.com/lanl/BASS)
+* [Friedman Example](examples/friedman_demo.py) - An extension of the "Friedman function" to functional response. The Bayesian regression model here is BASS (Bayesian Adaptive Smoothing Splines, see https://github.com/lanl/pyBASS)
 
-
-### Installation
-------------------------------------------------------------------------------
-1. Download zip or tar.gz of package or clone repository
-2. Install into R (> 4.1.0)
-
-> `install.packages("mvBayes.tar.gz", repos = NULL)`
-
-------------------------------------------------------------------------------
 
 ## References
 
