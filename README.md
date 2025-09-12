@@ -3,6 +3,17 @@
 
 A Python implementation of the multivariate Bayesian regression (mvBayes) framework. Decomposes a multivariate/functional response using a user-specified orthogonal basis decomposition, and then models each basis component independently using an arbitrary user-specified (univariate) Bayesian regression model. Includes prediction and plotting methods.
 
+## Installation
+------------------------------------------------------------------------------
+
+To install the most up to date version on github
+> `pip install -e .`
+
+please see [requirements](requirements.txt) for a list of packages `mvBayes`
+depends on
+
+------------------------------------------------------------------------------
+
 
 ## Examples
 * [Friedman Example](examples/friedman_demo.py) - An extension of the "Friedman function" to functional response. The Bayesian regression model here is BASS (Bayesian Adaptive Smoothing Splines, see https://github.com/lanl/pyBASS)
