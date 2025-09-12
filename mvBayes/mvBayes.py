@@ -764,7 +764,7 @@ class mvBayes:
             inmat = np.zeros((PNS["radii"].shape[0], N))
             inmat[:nBasis, :] = np.reshape(postCoefs, (N, nBasis), order='F').T
             tmp = fs.pns.fastPNSe2s(
-                inmat, self.basisInfo.basisConstruct.PNS
+                inmat, PNS
             ) * self.basisInfo.basisConstruct.radius
             YstandardPost = np.reshape(tmp, (postCoefs.shape[0], postCoefs.shape[1], tmp.shape[1]), order='F')
         else:
