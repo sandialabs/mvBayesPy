@@ -75,8 +75,6 @@ class basisSetup:
         self.Y = Y
         self.nMV = self.Y.shape[1]
         self.basisType = basisType
-        self.center = center
-        self.scale = scale
         self.Ycenter = 0
         self.Yscale = 1
         if basisType == "pns":
@@ -87,6 +85,8 @@ class basisSetup:
         if scale:
             self.Yscale = np.std(Y, axis=0)
             self.Yscale[self.Yscale == 0] = 1
+        self.center = center
+        self.scale = scale
         Ystandard = (Y - self.Ycenter) / self.Yscale
 
         if basisType == "pca":
