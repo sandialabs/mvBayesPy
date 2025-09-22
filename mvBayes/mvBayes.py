@@ -1101,7 +1101,7 @@ class mvBayes:
 
         # Plot Residuals on top of Y
         fig.add_subplot(2, 2, 1)
-        mseOverall = self.getMSE(R)
+        mseOverall = self.getMSE(R) * Ytest.shape[1]
         if not self.basisInfo.center and not self.basisInfo.scale:
             legendLab = "Y"
         else:
@@ -1118,7 +1118,7 @@ class mvBayes:
         plt.xscale(xscale)
         plt.ylabel("Residuals")
         plt.xlabel(xlabel)
-        plt.title(f"Overall MSE = {mseOverall:.4g}")
+        plt.title(f"Overall MSE = {mseOverall/Ytest.shape[1]:.4g}")
         plt.legend()
 
         # Plot each basis, scaled by residuals
@@ -1148,11 +1148,6 @@ class mvBayes:
                     * self.basisInfo.Yscale
                 )
                 mseBasis[k] = np.mean(RbasisCoefs[:, k] ** 2)
-
-                basisScaled = (
-                    np.outer(coefs[:, k], self.basisInfo.basis[k, :])
-                    * self.basisInfo.Yscale
-                )
                 varBasis[k] = self.basisInfo.varExplained[k]*(Ytest.shape[0]-1)/(Ytest.shape[0])
         mseOrder = np.argsort(mseBasis)[::-1]
 
@@ -1236,6 +1231,7 @@ class mvBayes:
         plt.close(fig)
 
         return
+    
 
     def mvSobol(
         self, totalSobol=True, idxSamples="final", nMC=None, showPlot=False, **kwargs

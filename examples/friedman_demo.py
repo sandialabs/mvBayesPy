@@ -40,7 +40,7 @@ mod.basisInfo.plot(idxMV=tt) # Plot PCA decomposition
 mod.traceplot()
 mod.plot(idxMV=tt)  # Evaluate training data fit
 mod.plot(Xtest=Xtest, Ytest=Ytest, idxMV=tt)  # Evaluate test data fit
-mod.sobol() 
+mod.mvSobol() 
 mod.plotSobol(idxMV=tt)
 
 # All posterior predictive samples
@@ -65,7 +65,7 @@ mod.basisInfo.plot()  # Plot PCA decomposition
 mod.traceplot()
 mod.plot()  # Evaluate training data fit
 mod.plot(Xtest=Xtest, Ytest=Ytest)  # Evaluate test data fit
-mod.sobol()
+mod.mvSobol()
 mod.plotSobol()
 
 # All posterior predictive samples
