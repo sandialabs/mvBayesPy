@@ -1101,7 +1101,7 @@ class mvBayes:
 
         # Plot Residuals on top of Y
         fig.add_subplot(2, 2, 1)
-        mseOverall = self.getMSE(R) * Ytest.shape[1]
+        mseOverall = self.getMSE(R, scale=False) * Ytest.shape[1]
         if not self.basisInfo.center and not self.basisInfo.scale:
             legendLab = "Y"
         else:
