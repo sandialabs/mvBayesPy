@@ -19,12 +19,12 @@ n = 500  # sample size
 p = 9  # number of predictors other (only 4 are used)
 X = np.random.rand(n, p)  # training inputs
 Y = (
-    np.apply_along_axis(f, 1, X) + np.random.normal(size=[n, len(tt)]) * 0.1
+    np.apply_along_axis(f, 1, X) + np.random.normal(size=[n, len(tt)])
 )  # training response
 
 ntest = 1000
 Xtest = np.random.rand(ntest, p)
-Ytest = np.apply_along_axis(f, 1, Xtest) + np.random.normal(size=[ntest, len(tt)]) * 0.1
+Ytest = np.apply_along_axis(f, 1, Xtest) + np.random.normal(size=[ntest, len(tt)])
 
 
 # %% Fit a multivariate BayesPPR model
@@ -32,6 +32,7 @@ mod = mb.mvBayes(
     bppr,
     X,
     Y,
+    nBasis=3,
     idxSamplesArg='mcmc_use', # 'mcmc_use' is bppr's equivalent of idxSamples
     # optionally extract posterior samples of residual standard deviation
     residSDExtract = lambda bppr_out: np.sqrt(bppr_out.samples.s2) 
