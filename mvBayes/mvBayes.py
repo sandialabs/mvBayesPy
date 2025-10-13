@@ -1100,12 +1100,18 @@ class mvBayes:
         cmap = plt.get_cmap("tab20")
 
         # Plot Residuals on top of Y
-        fig.add_subplot(2, 2, 1)
-        mseOverall = self.getMSE(R, scale=False) * Ytest.shape[1]
+        mseOverall = self.getMSE(R, scale=False)
+        if self.basisInfo.basisType == "pns":
+            mseTotal = mseOverall
+        else:
+            mseTotal = mseOverall * Ytest.shape[1]
+        
         if not self.basisInfo.center and not self.basisInfo.scale:
             legendLab = "Y"
         else:
             legendLab = "Y (Centered)"
+            
+        fig.add_subplot(2, 2, 1)
         plt.plot(idxMV, Ycentered[idxPlot].T, color=(0.7, 0.7, 1.0), alpha=0.5)
         plt.plot(idxMV, R[idxPlot].T, color="black", alpha=0.5)
         plt.plot(
@@ -1118,7 +1124,7 @@ class mvBayes:
         plt.xscale(xscale)
         plt.ylabel("Residuals")
         plt.xlabel(xlabel)
-        plt.title(f"Overall MSE = {mseOverall/Ytest.shape[1]:.4g}")
+        plt.title(f"Overall MSE = {mseOverall:.4g}")
         plt.legend()
 
         # Plot each basis, scaled by residuals
@@ -1126,8 +1132,9 @@ class mvBayes:
         RbasisScaled = []
         mseBasis = np.zeros(self.basisInfo.nBasis)
         varBasis = np.zeros(self.basisInfo.nBasis)
+        varExplainedTrunc = self.basisInfo.varExplained[self.basisInfo.nBasis:]
         if self.basisInfo.basisType == "pns":
-            mseTrunc = np.sum(self.basisInfo.varExplained[self.basisInfo.nBasis : self.basisInfo.nMV])
+            mseTrunc = np.sum(varExplainedTrunc)
             for k in range(self.basisInfo.nBasis):
                 PNS = self.basisInfo.basisConstruct.PNS
                 N = coefsPred.shape[0]
@@ -1141,7 +1148,7 @@ class mvBayes:
                 mseBasis[k] = np.mean(RbasisCoefs[:, k] ** 2)
                 varBasis[k] = np.mean(coefs[:, k] ** 2)
         else:
-            mseTrunc = np.sum(self.basisInfo.varExplained[self.basisInfo.nBasis : self.basisInfo.nMV])*(Ytest.shape[0]-1)/Ytest.shape[0]
+            mseTrunc = np.sum(varExplainedTrunc)*(Ytest.shape[0]-1)/Ytest.shape[0]
             for k in range(self.basisInfo.nBasis):
                 RbasisScaled.append(
                     np.outer(RbasisCoefs[:, k], self.basisInfo.basis[k, :])
@@ -1165,11 +1172,7 @@ class mvBayes:
 
         r2Basis = 1 - mseBasis / varBasis
         varOverall = np.sum(self.basisInfo.varExplained)*(Ytest.shape[0]-1)/Ytest.shape[0]
-        
-        if self.basisInfo.basisType == "pns":
-            r2Overall = 1 - (mseOverall / Ytest.shape[1]) / varOverall
-        else:
-            r2Overall = 1 - mseOverall / varOverall
+        r2Overall = 1 - mseTotal / varOverall
 
         plt.scatter(
             range(1, self.basisInfo.nBasis + 1), r2Basis, color=plotColors, s=50
@@ -1188,18 +1191,18 @@ class mvBayes:
         fig.add_subplot(2, 2, 4)
         if hasattr(self.basisInfo.basisConstruct, "basisTransformSqrt"):
             basisTransformSqrt = self.basisInfo.basisConstruct.basisTransformSqrt
-            mseOverall = np.mean((R @ basisTransformSqrt)**2, axis=0).sum()
+            mseTotal = np.mean((R @ basisTransformSqrt)**2, axis=0).sum()
             for k in range(self.basisInfo.nBasis):
                 mseBasis[k] = np.mean((RbasisScaled[k] @ basisTransformSqrt)**2, axis=0).sum()
             mseTrunc = np.mean((truncError @ basisTransformSqrt)**2, axis=0).sum()
 
-        mseTruncProp = self.basisInfo.varExplained[
-            self.basisInfo.nBasis : self.basisInfo.nMV
-        ] / np.sum(
-            self.basisInfo.varExplained[self.basisInfo.nBasis:self.basisInfo.nMV]
-        )
-        mseTruncCS = np.cumsum(mseTruncProp * mseTrunc / mseOverall)
-        mseExplained = mseBasis / mseOverall
+        if np.sum(varExplainedTrunc) == 0:
+            mseTruncCS = 0.0
+        else:
+            mseTruncProp = varExplainedTrunc / np.sum(varExplainedTrunc)
+            mseTruncCS = np.cumsum(mseTruncProp * mseTrunc / mseTotal)
+        mseExplained = mseBasis / mseTotal
+        
         plt.scatter(
             range(1, self.basisInfo.nBasis + 1),
             100 * mseExplained,

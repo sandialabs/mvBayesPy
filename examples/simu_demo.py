@@ -63,3 +63,5 @@ emu_vv = mb.mvBayes(
 )
 
 # %%
+emu_vv.plot()
+
