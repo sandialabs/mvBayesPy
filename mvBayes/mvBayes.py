@@ -1165,7 +1165,11 @@ class mvBayes:
 
         r2Basis = 1 - mseBasis / varBasis
         varOverall = np.sum(self.basisInfo.varExplained)*(Ytest.shape[0]-1)/Ytest.shape[0]
-        r2Overall = 1 - mseOverall / varOverall
+        
+        if self.basisInfo.basisType == "pns":
+            r2Overall = 1 - (mseOverall / Ytest.shape[1]) / varOverall
+        else:
+            r2Overall = 1 - mseOverall / varOverall
 
         plt.scatter(
             range(1, self.basisInfo.nBasis + 1), r2Basis, color=plotColors, s=50
