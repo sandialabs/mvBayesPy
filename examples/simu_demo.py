@@ -5,6 +5,7 @@ import mvBayes as mb
 import fdasrsf as fs
 from scipy.stats import norm
 
+np.random.seed(251014)
 
 def f(x):
     out = (
