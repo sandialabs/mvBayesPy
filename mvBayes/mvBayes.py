@@ -1134,6 +1134,7 @@ class mvBayes:
         varBasis = np.zeros(self.basisInfo.nBasis)
         varExplainedTrunc = self.basisInfo.varExplained[self.basisInfo.nBasis:]
         if self.basisInfo.basisType == "pns":
+            varTotal = np.sum(self.basisInfo.varExplained)
             mseTrunc = np.sum(varExplainedTrunc)
             for k in range(self.basisInfo.nBasis):
                 PNS = self.basisInfo.basisConstruct.PNS
@@ -1148,6 +1149,7 @@ class mvBayes:
                 mseBasis[k] = np.mean(RbasisCoefs[:, k] ** 2)
                 varBasis[k] = np.mean(coefs[:, k] ** 2)
         else:
+            varTotal = np.sum(self.basisInfo.varExplained)*(Ytest.shape[0]-1)/Ytest.shape[0]
             mseTrunc = np.sum(varExplainedTrunc)*(Ytest.shape[0]-1)/Ytest.shape[0]
             for k in range(self.basisInfo.nBasis):
                 RbasisScaled.append(
@@ -1171,8 +1173,7 @@ class mvBayes:
         plotColors = [cmap(k % 20) for k in range(self.basisInfo.nBasis)]
 
         r2Basis = 1 - mseBasis / varBasis
-        varOverall = np.sum(self.basisInfo.varExplained)*(Ytest.shape[0]-1)/Ytest.shape[0]
-        r2Overall = 1 - mseTotal / varOverall
+        r2Overall = 1 - mseTotal / varTotal
 
         plt.scatter(
             range(1, self.basisInfo.nBasis + 1), r2Basis, color=plotColors, s=50
