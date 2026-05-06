@@ -1,10 +1,15 @@
 [![Build](https://github.com/sandialabs/mvBayesPy/actions/workflows/python-package.yml/badge.svg)](https://github.com/sandialabs/mvBayesPy/actions/workflows/python-package.yml)
+[![PyPI version](https://badge.fury.io/py/mvBayes/.svg)](https://badge.fury.io/py/mvBayes/)
+
 # mvBayes
 
 A Python implementation of the multivariate Bayesian regression (mvBayes) framework. Decomposes a multivariate/functional response using a user-specified orthogonal basis decomposition, and then models each basis component independently using an arbitrary user-specified (univariate) Bayesian regression model. Includes prediction and plotting methods.
 
 ## Installation
 ------------------------------------------------------------------------------
+To install off PyPi
+
+> `pip install mvBayes`
 
 To install the most up to date version on github
 > `pip install -e .`
