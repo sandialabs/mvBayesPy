@@ -3,6 +3,8 @@
 
 # mvBayes
 
+![](logo.png)
+
 A Python implementation of the multivariate Bayesian regression (mvBayes) framework. Decomposes a multivariate/functional response using a user-specified orthogonal basis decomposition, and then models each basis component independently using an arbitrary user-specified (univariate) Bayesian regression model. Includes prediction and plotting methods.
 
 ## Installation
