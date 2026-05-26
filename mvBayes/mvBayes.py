@@ -1603,14 +1603,14 @@ class mvBayes:
             xscale=xscale,
         )
             
-        lines, labels = axs[1].get_legend_handles_labels()
+        legend_lines, legend_labels = axs[1].get_legend_handles_labels()
         if yOverlay is not None:
             ax2 = axs[1].twinx()
             ax2.plot(idxMV, yOverlay, color="black", linestyle="--", alpha=0.7, label=yOverlayLabel)
             lines2, labels2 = ax2.get_legend_handles_labels()
-            lines += lines2
-            labels += labels2
-        axs[1].legend(lines, labels, loc="upper left")
+            legend_lines += lines2
+            legend_labels += labels2
+        axs[1].legend(legend_lines, legend_labels, loc="upper left")
         
         # plot total order sobol' indices
         if totalSobol:
