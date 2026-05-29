@@ -45,16 +45,16 @@ def test_fit():
 
 #     # Hit the CPU max
 #     with patch("os.cpu_count", return_value=3):
-#         with patch("mvBayes.mvBayes.PATHOS_AVAILABLE", new=True):
+#         with patch("mvBayes.mvBayes.JOBLIB_AVAILABLE", new=True):
 #             assert model.nCoresAdjust(10) == 3
 
 #     # Hit the nBasis max
 #     with patch("os.cpu_count", return_value=10):
-#         with patch("mvBayes.mvBayes.PATHOS_AVAILABLE", new=True):
+#         with patch("mvBayes.mvBayes.JOBLIB_AVAILABLE", new=True):
 #             assert model.nCoresAdjust(10) == 4
 
 #     with patch("os.cpu_count", return_value=10):
-#         with patch("mvBayes.mvBayes.PATHOS_AVAILABLE", new=True):
+#         with patch("mvBayes.mvBayes.JOBLIB_AVAILABLE", new=True):
 #             assert model.nCoresAdjust(2) == 2
 
 

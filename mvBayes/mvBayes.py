@@ -12,12 +12,10 @@ import os
 import inspect
 
 try:
-    import pathos, multiprocess
-    from pathos.multiprocessing import ProcessingPool as Pool
-    import dill
-    PATHOS_AVAILABLE = True
+    from joblib import Parallel, delayed
+    JOBLIB_AVAILABLE = True
 except ImportError:
-    PATHOS_AVAILABLE = False
+    JOBLIB_AVAILABLE = False
 
 try:
     import fdasrsf as fs
@@ -591,9 +589,8 @@ class mvBayes:
         if nCores == 1:
             bmList = [fitBayesModel(k) for k in range(self.basisInfo.nBasis)]
         else:
-            with Pool(processes=nCores) as pool:
-                bmList = pool.map(fitBayesModel, range(self.basisInfo.nBasis))
-
+            bmList = Parallel(n_jobs=nCores)(delayed(fitBayesModel)(k) for k in range(self.basisInfo.nBasis))
+   
         self.bmList = bmList
 
         self._getSamples()
@@ -606,7 +603,7 @@ class mvBayes:
 
     def nCoresAdjust(self, nCores):
         """
-        Adjust the number of cores based on availability of 'pathos' module
+        Adjust the number of cores based on availability of 'joblib' module
         and number of available cores (calculated by os.cpu_count())
 
         Parameters
@@ -622,8 +619,8 @@ class mvBayes:
         """
         nCores = min(nCores, self.basisInfo.nBasis)
         nCores_Available = os.cpu_count()
-        if nCores > 1 and not PATHOS_AVAILABLE:
-            print("Parallel processing module 'pathos' not available. Setting nCores=1.")
+        if nCores > 1 and not JOBLIB_AVAILABLE:
+            print("Parallel processing module 'joblib' not available. Setting nCores=1.")
             nCores = 1
         elif nCores > nCores_Available:
             print(
@@ -745,8 +742,7 @@ class mvBayes:
         if nCores == 1:
             postCoefs = [predictBayesModel(k) for k in range(self.basisInfo.nBasis)]
         else:
-            with Pool(processes=nCores) as pool:
-                postCoefs = pool.map(predictBayesModel, range(self.basisInfo.nBasis))
+            postCoefs = Parallel(n_jobs=nCores)(delayed(predictBayesModel)(k) for k in range(self.basisInfo.nBasis))
 
         postCoefs = np.dstack(postCoefs)
 

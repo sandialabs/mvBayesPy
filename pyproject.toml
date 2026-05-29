@@ -16,7 +16,7 @@ dependencies = ["numpy", "scipy", "matplotlib", "scikit-learn", "patsy"]
 Homepage = "https://cee-gitlab.sandia.gov/gqcolli/mvBayes"
 
 [project.optional-dependencies]
-optional = ["pathos", "fdasrsf", "pyBASS", "pyBayesPPR"]
+optional = ["joblib", "fdasrsf", "pyBASS", "pyBayesPPR"]
 
 [tool.setuptools]
 zip-safe = false
