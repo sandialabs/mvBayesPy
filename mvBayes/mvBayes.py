@@ -12,8 +12,9 @@ import os
 import inspect
 
 try:
+    import pathos, multiprocess
     from pathos.multiprocessing import ProcessingPool as Pool
-
+    import dill
     PATHOS_AVAILABLE = True
 except ImportError:
     PATHOS_AVAILABLE = False
