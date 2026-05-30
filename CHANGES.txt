@@ -1,3 +1,4 @@
+v1.0.4, 2026-05-29 -- change to joblib for parallel
 v1.0.3, 2026-05-05 -- add PNS basis options and bugfixes
 v1.0.2, 2025-03-25 -- add legrende and bspline basis option
 v1.0.1, 2024-02-25 -- initial tracking of changes

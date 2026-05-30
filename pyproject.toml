@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mvBayes"
-version = "1.0.3"
+version = "1.0.4"
 authors = [{name = "Gavin Collins", email = "gqcolli@sandia.gov"},
            {name = "J. Derek Tucker", email = "jdtuck@sandia.gov"}]
 license = {text = "BSD-3"}
