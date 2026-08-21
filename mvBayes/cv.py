@@ -3,7 +3,73 @@ import time
 import mvBayes as mb
 from scipy.stats import multivariate_normal
 
-def mvCV(bayesModel, X, Y, nTrain=None, nTest=None, nRep=1, seed=None, coverageTarget=0.95, idxSamples="default", uqTruncMethod="gaussian", **kwargs):
+
+def _crps_sorted_1d(samples, y_true):
+    """
+    Compute exact CRPS from univariate empirical predictive samples using sorting.
+
+    Parameters
+    ----------
+    samples : np.ndarray
+        1D array of predictive samples.
+    y_true : float
+        Observed scalar response.
+
+    Returns
+    -------
+    float
+        Exact CRPS.
+    """
+    x = np.sort(np.asarray(samples).ravel())
+    s = x.size
+
+    term1 = np.mean(np.abs(x - y_true))
+    coeff = 2 * np.arange(1, s + 1) - s - 1
+    term2 = np.sum(coeff * x) / (s ** 2)
+
+    return term1 - term2
+
+
+def _avg_crps_sorted(samples, y_true):
+    """
+    Compute average marginal CRPS across multivariate dimensions.
+
+    Parameters
+    ----------
+    samples : np.ndarray
+        Array of shape (nSamples, q), predictive samples for one observation.
+    y_true : np.ndarray
+        Array of shape (q,), observed multivariate response.
+
+    Returns
+    -------
+    float
+        Average marginal CRPS across dimensions.
+    """
+    samples = np.asarray(samples)
+    y_true = np.asarray(y_true).ravel()
+
+    q = samples.shape[1]
+    out = 0.0
+    for j in range(q):
+        out += _crps_sorted_1d(samples[:, j], y_true[j])
+
+    return out / q
+
+
+def mvCV(
+    bayesModel,
+    X,
+    Y,
+    nTrain=None,
+    nTest=None,
+    nRep=1,
+    seed=None,
+    coverageTarget=0.95,
+    idxSamples="default",
+    uqTruncMethod="gaussian",
+    **kwargs
+):
     """
     Cross-Validation (CV) of a Multivariate Bayesian Regression Model
     
@@ -21,7 +87,7 @@ def mvCV(bayesModel, X, Y, nTrain=None, nTest=None, nRep=1, seed=None, coverageT
         **kwargs: Additional arguments to mvBayes, including arguments to bayesModel.
     
     Returns:
-        A dictionary containing the out-of-sample RMSE for each replication, fitting and prediction times, and other metrics.
+        A dictionary containing the out-of-sample RMSE, average marginal CRPS, fitting and prediction times, and other metrics for each replication.
     """
     # Setup
     n, p = X.shape
@@ -52,6 +118,7 @@ def mvCV(bayesModel, X, Y, nTrain=None, nTest=None, nRep=1, seed=None, coverageT
     # Run CV
     rmse = np.zeros(nRep)
     rSquared = np.zeros(nRep)
+    crps = np.zeros(nRep)
     coverage = np.zeros(nRep)
     intervalWidth = np.zeros(nRep)
     intervalScore = np.zeros(nRep)
@@ -90,6 +157,8 @@ def mvCV(bayesModel, X, Y, nTrain=None, nTest=None, nRep=1, seed=None, coverageT
         elif uqTruncMethod == "empirical":
             idxResample = np.random.choice(nTrain, size=np.prod(preds.shape[:2]), replace=True)
             truncError = fit.basisInfo.truncError[idxResample, :].reshape(preds.shape)
+        else:
+            raise ValueError("uqTruncMethod must be 'gaussian' or 'empirical'")
         preds += truncError
         del truncError
 
@@ -110,6 +179,12 @@ def mvCV(bayesModel, X, Y, nTrain=None, nTest=None, nRep=1, seed=None, coverageT
         preds += residError
         del residError
 
+        # Calculate average marginal CRPS
+        crps_vals = np.zeros(nTest)
+        for i in range(nTest):
+            crps_vals[i] = _avg_crps_sorted(preds[:, i, :], Ytest[i, :])
+        crps[r] = np.mean(crps_vals)
+
         # Calculate distance from posterior mean
         distBound = np.zeros(nTest)
         for idx in range(nTest):
@@ -127,6 +202,7 @@ def mvCV(bayesModel, X, Y, nTrain=None, nTest=None, nRep=1, seed=None, coverageT
     out = {
         "rmse": rmse,
         "rSquared": rSquared,
+        "crps": crps,
         "coverageTarget": coverageTarget,
         "coverage": coverage,
         "intervalWidth": intervalWidth,
@@ -145,5 +221,3 @@ def mvCV(bayesModel, X, Y, nTrain=None, nTest=None, nRep=1, seed=None, coverageT
     }
 
     return out
-
-
