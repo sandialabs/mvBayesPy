@@ -367,22 +367,63 @@ class basisSetup:
         plt.close(fig)
 
 
+def legendreP(N, X):
+    """
+    Evaluate the Legendre polynomials of degree 0, ..., N.
+
+    Parameters:
+        N (int): Maximum polynomial degree.
+        X (ndarray): Points in [-1, 1] at which to evaluate the polynomials.
+
+    Returns:
+        ndarray: Array of shape (N + 1, X.size) whose row n holds the degree-n
+            Legendre polynomial evaluated at each point of `X`.
+    """
+    X = np.atleast_1d(np.asarray(X, dtype=float))
+    if hasattr(sp, "legendre_p_all"):  # scipy >= 1.15
+        # shape (diff_n + 1, N + 1, X.size); only the values are requested
+        allValues = sp.legendre_p_all(N, X)
+        return np.reshape(allValues[..., : (N + 1), :], (N + 1, X.size))
+
+    # scipy < 1.15, where legendre_p_all is unavailable
+    return sp.eval_legendre(np.arange(N + 1)[:, None], X[None, :])
+
+
 def legendre(N, X):
-    matrixReturn = np.zeros((N + 1, X.shape[0]))
-    for i in enumerate(X):
-        currValues = sp.lpmn(N, N, i[1])
-        matrixReturn[:, i[0]] = np.array([j[N] for j in currValues[0]])
+    """
+    Evaluate the associated Legendre functions of degree N and orders 0, ..., N.
+
+    Parameters:
+        N (int): Degree of the associated Legendre functions.
+        X (ndarray): Points in [-1, 1] at which to evaluate the functions.
+
+    Returns:
+        ndarray: Array of shape (N + 1, X.size) whose row m holds the
+            order-m, degree-N associated Legendre function evaluated at each
+            point of `X`.
+    """
+    X = np.atleast_1d(np.asarray(X, dtype=float))
+    if hasattr(sp, "assoc_legendre_p_all"):  # scipy >= 1.15
+        # shape (diff_n + 1, N + 1, 2 * N + 1, X.size), with the nonnegative
+        # orders 0, ..., N stored first along the order axis
+        allValues = sp.assoc_legendre_p_all(N, N, X)
+        values = np.reshape(allValues[..., N, : (N + 1), :], (N + 1, X.size))
+        # scipy 1.15 evaluates order 0 as 1 rather than (-1)^N at X = -1, so
+        # take that row from the (correct) ordinary Legendre routine instead
+        values[0, :] = legendreP(N, X)[N, :]
+        return values
+
+    # scipy < 1.15, where assoc_legendre_p_all is unavailable
+    matrixReturn = np.zeros((N + 1, X.size))
+    for i, x in enumerate(X):
+        matrixReturn[:, i] = sp.lpmn(N, N, x)[0][:, N]
     return matrixReturn
 
 
 def basisLegendre(fDomain, nLegendre, pFourier):
-    basis = np.zeros((2 * nLegendre, fDomain.shape[0]))
-    for i in range(0, 2 * nLegendre):
-        fDomainScaled = 2 * (fDomain / pFourier) - 1
-        tmp = legendre(i + 1, fDomainScaled)
-        basis[i, :] = tmp[0, :]
-
-    return basis
+    fDomainScaled = 2 * (fDomain / pFourier) - 1
+    # rows are the Legendre polynomials of degree 1, ..., 2 * nLegendre
+    return legendreP(2 * nLegendre, fDomainScaled)[1:, :]
 
 
 def isOrthogonal(basis, tol=1e-10):

@@ -47,6 +47,53 @@ def test_preprocessY():
     assert np.allclose(Y, bs.preprocessY(Y))
 
 
+def test_legendre_values():
+    from mvBayes.mvBayes import legendre, legendreP
+
+    x = np.linspace(-1, 1, 11)
+
+    # P_0, ..., P_3
+    expected = np.vstack([
+        np.ones_like(x),
+        x,
+        (3 * x**2 - 1) / 2,
+        (5 * x**3 - 3 * x) / 2,
+    ])
+    assert np.allclose(legendreP(3, x), expected)
+
+    # associated Legendre functions of degree 2, orders 0, 1, 2
+    expected = np.vstack([
+        (3 * x**2 - 1) / 2,
+        -3 * x * np.sqrt(1 - x**2),
+        3 * (1 - x**2),
+    ])
+    assert np.allclose(legendre(2, x), expected)
+
+
+def test_legendre_basis():
+    from mvBayes.mvBayes import basisLegendre
+
+    fDomain = np.linspace(0, 1, 20)
+    basis = basisLegendre(fDomain, 3, 1)
+
+    # rows are the Legendre polynomials of degree 1, ..., 6 on [-1, 1]
+    x = 2 * fDomain - 1
+    assert basis.shape == (6, 20)
+    assert np.allclose(basis[0, :], x)
+    assert np.allclose(basis[1, :], (3 * x**2 - 1) / 2)
+
+
+def test_legendre_basisSetup():
+    Y = np.random.rand(100, 10)
+    bs = basisSetup(Y, basisType="legendre", nBasis=4, center=True, scale=True)
+
+    assert bs.basisType == "legendre"
+    assert bs.nBasis == 4
+    assert bs.basis.shape == (4, 10)
+    assert bs.coefs.shape == (100, 4)
+    assert np.allclose(Y - bs.getYtrunc(), bs.truncError)
+
+
 def test_plot():
     Y = np.random.rand(100, 10)
     bs = basisSetup(Y, basisType="pca", nBasis=5, center=True, scale=True)
