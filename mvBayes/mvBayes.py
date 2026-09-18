@@ -1369,7 +1369,7 @@ class mvBayes:
                 firstOrder[idx] = sobol.S_var[:p].copy()
                 if totalSobol:
                     totalOrder[idx] = sobol.T_var.copy()
-                varTotal = sobol.S_var[0] / sobol.S[0]
+                varTotal[idx] = sobol.S_var[0] / sobol.S[0]
 
             self.firstOrderSobol = firstOrder
             if totalSobol:
@@ -1465,7 +1465,7 @@ class mvBayes:
 
         """
 
-        meanS = np.mean(saltelliMC, axis=1)
+        meanS = np.mean(saltelliMC, axis=1, keepdims=True)
         saltelliMC -= meanS
 
         return saltelliMC
@@ -1580,7 +1580,7 @@ class mvBayes:
                 idxMV,
                 1.0 - np.sum(firstOrderRel, axis=0),
                 linewidth=3,
-                color=rgb[j],
+                color=rgb[p],
                 label=labels[p],
             )
 
