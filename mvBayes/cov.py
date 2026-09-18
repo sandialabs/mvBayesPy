@@ -11,9 +11,9 @@ def covDiag(resid):
 
 def covMA1(resid, varEqual=True):
     nMV = resid.shape[1]
-    
+
     if nMV == 1:
-        return np.array([[1]])
+        return np.array([[1]]), 0
     
     if varEqual is True:
         std = np.std(resid, ddof=1).reshape((1,))
@@ -43,9 +43,9 @@ def covMA1(resid, varEqual=True):
 
 def covAR1(resid, varEqual=True):
     nMV = resid.shape[1]
-    
+
     if nMV == 1:
-        return np.array([[1]])
+        return np.array([[1]]), 0
     
     if varEqual is True:
         std = np.std(resid, ddof=1).reshape((1,))
