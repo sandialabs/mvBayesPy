@@ -1,4 +1,5 @@
 .DS_Store
+.coverage
 mvBayes.egg-info/
 */__pycache__/
 .ipynb_checkpoints
