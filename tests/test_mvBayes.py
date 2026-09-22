@@ -1,3 +1,4 @@
+import importlib
 import tempfile
 from unittest.mock import patch
 
@@ -14,6 +15,11 @@ from tests.conftest import (
     mockBayesModelNoIdx,
     mockBayesModelObjectSamples,
 )
+
+# `mvBayes/__init__.py` does `from .mvBayes import *`, so the `mvBayes.mvBayes`
+# package attribute is the class, not the submodule. Resolve the submodule
+# explicitly so patching module-level globals works on every Python version.
+mvBayesModule = importlib.import_module("mvBayes.mvBayes")
 
 
 # --- initialization and fit ---------------------------------------------------
@@ -214,7 +220,7 @@ def test_nCoresAdjust(smallXY):
     model = mvBayes.mvBayes(mockBayesModel, X, Y, nBasis=3)
 
     # Clamped to nBasis (3), even if more requested, with joblib available
-    with patch("mvBayes.mvBayes.JOBLIB_AVAILABLE", True):
+    with patch.object(mvBayesModule, "JOBLIB_AVAILABLE", True):
         with patch("os.cpu_count", return_value=16):
             assert model.nCoresAdjust(10) == 3
             assert model.nCoresAdjust(2) == 2
@@ -224,7 +230,7 @@ def test_nCoresAdjust(smallXY):
             assert model.nCoresAdjust(3) == 2
 
     # joblib unavailable -> forced to 1
-    with patch("mvBayes.mvBayes.JOBLIB_AVAILABLE", False):
+    with patch.object(mvBayesModule, "JOBLIB_AVAILABLE", False):
         with patch("os.cpu_count", return_value=16):
             assert model.nCoresAdjust(3) == 1
 
